@@ -4,12 +4,11 @@ const User = require('../models/userModel');
 
 
 const register = async  (req, res) => {
-    
-    const user = await User.create({...req.body})
+	const user = await User.create({ ...req.body });
 
-    const token = user.getSignedJwtToken();
+	const token = user.getSignedJwtToken();
 
-    res.status(201).json({success: true,user: user.name, token});
+	res.status(201).json({ success: true, user: user.name, token });
 }
 
 const login = async (req, res) => {
