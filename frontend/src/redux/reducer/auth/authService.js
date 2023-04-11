@@ -15,13 +15,16 @@ export const login = createAsyncThunk(
 				data
 			);
 
+			if (response.data) {
+				localStorage.setItem('user', JSON.stringify(response.data));
+			}
+
 			dispatch(successGlobal('User logged in successfully'));
 
 			return response.data;
 		} catch (error) {
-			console.log(error.response.data.error);
-			dispatch(errorGlobal(error.response.data.error));
-			return rejectWithValue(error.response.data.error);
+			dispatch(errorGlobal(error.response.data.msg));
+			return rejectWithValue(error.response.data.msg);
 		}
 	}
 );
@@ -35,7 +38,13 @@ export const register = createAsyncThunk(
 				data
 			);
 
-			thunkAPI.dispatch(successGlobal('User registered successfully'));
+			const user = response.data.user;
+
+			thunkAPI.dispatch(successGlobal(`${user} registered successfully`));
+
+			if (response.data) {
+				localStorage.setItem('user', JSON.stringify(response.data));
+			}
 
 			return response.data;
 		} catch (error) {
@@ -44,3 +53,13 @@ export const register = createAsyncThunk(
 		}
 	}
 );
+
+export const logout = createAsyncThunk('auth/logout', async () => {
+	localStorage.removeItem('user');
+
+	return {};
+});
+	
+
+
+

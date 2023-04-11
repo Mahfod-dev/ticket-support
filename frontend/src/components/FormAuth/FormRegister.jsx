@@ -1,4 +1,5 @@
-import { useCallback, useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { FaUser } from 'react-icons/fa';
 
@@ -16,45 +17,35 @@ import { showToast } from '../../helpers/showToast';
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
 import { register } from '../../redux/reducer/auth/authService';
-import {
-	clearNotification,
-	successGlobal,
-	errorGlobal,
-} from '../../redux/reducer/notifications/notificationSlice';
+import { clearNotification } from '../../redux/reducer/notifications/notificationSlice';
 
 export const FormRegister = () => {
 	const dispatch = useDispatch();
-	const { user, error } = useSelector((state) => state.auth);
+	const navigate = useNavigate();
+
 	const notifications = useSelector((state) => state.notification);
+	const { error } = useSelector((state) => state.auth);
 
-	const {
-		name,
-		email,
-		password,
-		password2,
-		handleInputChange,
-		values,
-		reset,
-	} = useForm({
-		name: 'mahfod',
-		email: 'mahfod.dev@gmail.com',
-		password: '1234567',
-		password2: '1234567',
-	});
-
-	console.log(notifications);
+	const { name, email, password, password2, handleInputChange, reset } =
+		useForm({
+			name: 'mahfod',
+			email: 'mahfod.dev@gmail.com',
+			password: '1234567',
+			password2: '1234567',
+		});
 
 	const showNotification = useCallback(
 		(type) => {
 			let { global } = notifications;
 
 			const message = global.message ? global.message : type;
-			console.log(message);
+
 			if (notifications && global.type === type) {
-				console.log('showing toast', type, message);
 				showToast(type, message);
+				dispatch(clearNotification());
 			}
 		},
+
 		[notifications, dispatch]
 	);
 
@@ -75,6 +66,12 @@ export const FormRegister = () => {
 				password,
 			};
 			dispatch(register(userData));
+
+			setTimeout(() => {
+				navigate('/');
+			}, 2000);
+
+			reset();
 		}
 
 		reset();
